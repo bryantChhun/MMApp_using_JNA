@@ -9,6 +9,7 @@ package mmJNAApp;
 
 import com.sun.jna.Native;
 import com.sun.jna.NativeLong;
+import com.sun.jna.Platform;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
 import javax.swing.JTextArea;
@@ -22,9 +23,17 @@ public class DemoCameraStageDevice {
     
     public DemoCameraStageDevice() {
         String rootPath = System.getProperty("user.dir");
-        String DLLPath = rootPath + "\\mmgr_dal_DemoCamera.dll";
-        System.out.print("DLLPath = "+DLLPath);
-        INSTANCE = (DemoCameraDLL_h) Native.loadLibrary(DLLPath, DemoCameraDLL_h.class);
+        String libPath = (Platform.isWindows() ? 
+                rootPath + "\\mmgr_dal_DemoCamera.dll" : 
+                rootPath + "/libmmgr_dal_DemoCamera");
+        System.out.print("DLLPath = "+libPath);
+        try {
+            INSTANCE = (DemoCameraDLL_h) Native.loadLibrary(libPath, DemoCameraDLL_h.class);
+        } catch (Exception ex) {
+            System.out.print("exception loading library = "+ex);
+        }
+        System.out.print("DLLPath = "+libPath);
+        INSTANCE = (DemoCameraDLL_h) Native.loadLibrary(libPath, DemoCameraDLL_h.class);
     }
     
     public void InitializeModuleData() {
